@@ -410,6 +410,7 @@ impl<EXT, DB: Database> Evm<'_, EXT, DB> {
             FrameOrResult::Frame(first_frame) => self.run_the_loop(first_frame)?,
             FrameOrResult::Result(result) => result,
         };
+        println!("RESULT: {:?}", result);
 
         let ctx = &mut self.context;
 

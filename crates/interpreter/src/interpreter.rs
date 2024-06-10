@@ -9,11 +9,11 @@ pub use contract::Contract;
 pub use shared_memory::{num_words, SharedMemory, EMPTY_SHARED_MEMORY};
 pub use stack::{Stack, STACK_LIMIT};
 
-use crate::EOFCreateOutcome;
 use crate::{
     gas, primitives::Bytes, push, push_b256, return_ok, return_revert, CallOutcome, CreateOutcome,
     FunctionStack, Gas, Host, InstructionResult, InterpreterAction,
 };
+use crate::{EOFCreateOutcome, OpCode, OPCODE_INFO_JUMPTABLE};
 use core::cmp::min;
 use revm_primitives::{Bytecode, Eof, U256};
 use std::borrow::ToOwned;
@@ -160,6 +160,7 @@ impl Interpreter {
     /// - Updates gas costs and records refunds in the interpreter's `gas` field.
     /// - May alter `instruction_result` in case of external errors.
     pub fn insert_create_outcome(&mut self, create_outcome: CreateOutcome) {
+        println!("CREATE OUTCOME: {:?}", create_outcome);
         self.instruction_result = InstructionResult::Continue;
 
         let instruction_result = create_outcome.instruction_result();
@@ -192,6 +193,7 @@ impl Interpreter {
     }
 
     pub fn insert_eofcreate_outcome(&mut self, create_outcome: EOFCreateOutcome) {
+        println!("EOF CREATE OUTCOME: {:?}", create_outcome);
         self.instruction_result = InstructionResult::Continue;
         let instruction_result = create_outcome.instruction_result();
 
@@ -249,6 +251,8 @@ impl Interpreter {
         shared_memory: &mut SharedMemory,
         call_outcome: CallOutcome,
     ) {
+
+        println!("CALL OUTCOME: {:?}", call_outcome);
         self.instruction_result = InstructionResult::Continue;
 
         let out_offset = call_outcome.memory_start();
@@ -372,11 +376,21 @@ impl Interpreter {
         self.shared_memory = shared_memory;
         // main loop
         while self.instruction_result == InstructionResult::Continue {
+            let op = self.current_opcode();
+            let stack = self.stack.data().clone();
+            let gas = self.gas.remaining();
             self.step(instruction_table, host);
+            println!(
+                "OP: {op:X} {:?}, Res: {:?} gas: {gas}, stack:{:?}",
+                OpCode::name_by_op(op),
+                self.instruction_result,
+                stack
+            );
         }
 
         // Return next action if it is some.
         if self.next_action.is_some() {
+            println!("NEXT ACTION: {:?}", self.next_action);
             return core::mem::take(&mut self.next_action);
         }
         // If not, return action without output as it is a halt.
