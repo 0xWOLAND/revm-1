@@ -34,6 +34,11 @@ bitflags = { version = "2.5.0", default-features = false }
 c-kzg = { version = "1.0.2", default-features = false, optional = true }
 once_cell = { version = "1.19", default-features = false, optional = true }
 
+# Optionally use `kzg-rs` for a pure Rust implementation of KZG.
+kzg-rs = { git = "https://github.com/0xWOLAND/kzg-rs", default-features = false, features = [
+    'cache',
+], optional = true }
+
 # utility
 enumn = "0.1"
 derive_more = { version = "0.99", optional = true }
@@ -50,7 +55,7 @@ serde = { version = "1.0", default-features = false, features = [
 hex = { version = "0.4", default-features = false }
 
 [features]
-default = ["std", "c-kzg", "portable"]
+default = ["std", "kzg-rs"]
 std = [
     "serde?/std",
     "alloy-primitives/std",
@@ -67,6 +72,7 @@ serde = [
     "bitvec/serde",
     "bitflags/serde",
     "c-kzg?/serde",
+    "kzg-rs?/serde",
 ]
 arbitrary = ["std", "alloy-primitives/arbitrary", "bitflags/arbitrary"]
 asm-keccak = ["alloy-primitives/asm-keccak"]
@@ -97,3 +103,4 @@ rand = ["alloy-primitives/rand"]
 
 # See comments in `revm-precompile`
 c-kzg = ["dep:c-kzg", "dep:once_cell", "dep:derive_more"]
+kzg-rs = ["dep:kzg-rs", "dep:once_cell", "dep:derive_more"]
