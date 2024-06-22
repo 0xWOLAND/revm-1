@@ -55,7 +55,7 @@ serde = { version = "1.0", default-features = false, features = [
 hex = { version = "0.4", default-features = false }
 
 [features]
-default = ["std", "kzg-rs"]
+default = ["std", "c-kzg", "portable"]
 std = [
     "serde?/std",
     "alloy-primitives/std",
@@ -72,7 +72,6 @@ serde = [
     "bitvec/serde",
     "bitflags/serde",
     "c-kzg?/serde",
-    "kzg-rs?/serde",
 ]
 arbitrary = ["std", "alloy-primitives/arbitrary", "bitflags/arbitrary"]
 asm-keccak = ["alloy-primitives/asm-keccak"]
