@@ -7,10 +7,10 @@ use std::{boxed::Box, sync::Arc};
 
 /// KZG Settings that allow us to specify a custom trusted setup.
 /// or use hardcoded default settings.
-#[cfg(feature = "kzg-rs")]
+#[cfg(not(feature = "c-kzg"))]
 pub use kzg_rs::EnvKzgSettings;
 
-#[cfg(not(feature = "kzg-rs"))]
+#[cfg(feature = "c-kzg")]
 #[derive(Debug, Clone, Default, PartialEq, Eq, Hash)]
 pub enum EnvKzgSettings {
     /// Default mainnet trusted setup
@@ -20,7 +20,7 @@ pub enum EnvKzgSettings {
     Custom(Arc<c_kzg::KzgSettings>),
 }
 
-#[cfg(not(feature = "kzg-rs"))]
+#[cfg(feature = "c-kzg")]
 impl EnvKzgSettings {
     /// Return set KZG settings.
     pub fn get(&self) -> &KzgSettings {
