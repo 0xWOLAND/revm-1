@@ -22,6 +22,10 @@ pub mod secp256k1;
 pub mod secp256r1;
 pub mod utilities;
 
+#[cfg(feature = "kzg-rs")]
+// silence lint
+use kzg_rs as _;
+
 use core::hash::Hash;
 use once_cell::race::OnceBox;
 #[doc(hidden)]
