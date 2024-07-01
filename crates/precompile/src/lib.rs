@@ -24,7 +24,7 @@ pub mod utilities;
 
 // silence lint
 use cfg_if as _;
-#[cfg(feature = "kzg-rs")]
+#[cfg(all(feature = "c-kzg", feature = "kzg-rs"))]
 use kzg_rs as _;
 
 use core::hash::Hash;
